@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @Data
 public class Note {
 
+    //TODO align the @Data things so that timestamps and id would not have setters
+
     @Id
     @GeneratedValue
     private Long id;
