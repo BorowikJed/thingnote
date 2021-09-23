@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,6 +29,9 @@ public class Note {
     private LocalDateTime createdDateTime;
 
     @UpdateTimestamp
-    private LocalDateTime updateDateTime;
+    private LocalDateTime updatedDateTime;
+
+    @ManyToOne
+    private User user;
 
 }
