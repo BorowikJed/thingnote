@@ -27,30 +27,51 @@ public class NotesController {
 
     @GetMapping("/allnotes")
     @ResponseBody
-    public List<Note> getAllNotes() {
+    public ResponseEntity<List<Note>> getAllNotes() {
+
         Iterable<Note> all = noteRepository.findAll();
-        return Streamable.of(noteRepository.findAll()).toList();
+        return new ResponseEntity<>(Streamable.of(noteRepository.findAll()).toList(), HttpStatus.OK);
+    }
+
+    @GetMapping("/notes/{id}")
+    @ResponseBody
+    public ResponseEntity<Note> getNote(@PathVariable Long id) {
+
+        Optional<Note> byId = noteRepository.findById(id);
+        return byId
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
+    @DeleteMapping("/notes/{id}")
+    @ResponseBody
+    public ResponseEntity<Note> deleteNote(@PathVariable Long id) {
+
+        noteRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/notes")
     @ResponseBody
-    public Note addNote(@RequestBody Note note) {
-        return noteRepository.save(note);
+    public ResponseEntity<Note> addNote(@RequestBody Note note) {
+
+        return new ResponseEntity<>(noteRepository.save(note), HttpStatus.OK);
     }
 
     @PatchMapping("/notes/{id}")
     @ResponseBody
-    public ResponseEntity<?> editNote(@RequestBody Note note, @PathVariable Long id) {
+    public ResponseEntity<Note> editNote(@RequestBody Note note, @PathVariable Long id) {
+
         Optional<Note> optionalNote = noteRepository.findById(id);
 
-        if (optionalNote.isEmpty())
+        if (optionalNote.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        else {
+        } else {
             optionalNote.get().setTitle(note.getTitle());
             optionalNote.get().setText(note.getText());
         }
-        Note save = noteRepository.save(optionalNote.get());
-        return ResponseEntity.ok(save);
+        Note saved = noteRepository.save(optionalNote.get());
+        return ResponseEntity.ok(saved);
     }
 
 }
